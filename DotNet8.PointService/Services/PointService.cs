@@ -16,30 +16,6 @@ public class PointService
         _logger = logger;
     }
 
-    //public async Task<PointCalculationResponseModel> CalculatePoints(PointCalculationRequestModel requestModel)
-    //{
-    //    var response = new PointCalculationResponseModel();
-
-    //    try
-    //    {
-    //        var totalPoints = requestModel.PurchasedItems
-    //            .Where(item => item.ItemDescription != "Alcohol")
-    //            .Sum(item => (int)(item.TotalPrice / 10));
-
-    //        response.EarnedPoints = totalPoints;
-    //        response.IsSuccess = true;
-    //        response.Message = $"Total {totalPoints} points earned.";
-
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        _logger.LogCustomError(ex);
-    //        response.IsSuccess = false;
-    //        response.Message = "Error calculating points. Please try again.";
-    //    }
-    //    return response;
-    //}
-
     public async Task<bool> UpdateMemberPoints(string memberCode, int points)
     {
         try
@@ -68,95 +44,100 @@ public class PointService
     public async Task<PointCalculationResponseModel> CalculatePoints(PointCalculationRequestModel requestModel)
     {
         var model = new PointCalculationResponseModel();
-        try
+
+        #region Validate Member
+
+        var member = await _context.TblMembers
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(m =>
+                        m.MemberId == requestModel.MemberId &&
+                        m.MemberCode == requestModel.MemberCode);
+        if (member == null)
         {
-            #region Validate Member
+            model.IsSuccess = false;
+            model.Message = "Member not found!";
+            return model;
+        }
 
-            var member = await _context.TblMembers
-                        .AsNoTracking()
-                        .FirstOrDefaultAsync(m =>
-                            m.MemberId == requestModel.MemberId &&
-                            m.MemberCode == requestModel.MemberCode);
-            if (member == null)
+        #endregion
+
+        var strategy = _context.Database.CreateExecutionStrategy();
+
+        await strategy.ExecuteAsync(async () =>
+        {
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
-                model.IsSuccess = false;
-                model.Message = "Member not found!";
-                return model;
-            }
-
-            #endregion
-
-            using (var transaction = _context.Database.BeginTransaction())
-            {
-                #region Update Member Point
-
-                var totalPrice = requestModel.PurchasedItems
-                .Where(i => i.ItemDescription == "Non Alcohol")
-                .Sum(i => i.TotalPrice);
-
-                var totalPoints = (int)(totalPrice / 10);
-
-                member!.TotalPoints += totalPoints;
-                member.TotalPurchasedAmount += totalPrice;
-
-                _context.Entry(member).State = EntityState.Modified;
-                await _context.SaveAndDetachAsync();
-
-                #endregion
-
-                #region Save Purchase History
-
-                var history = new PurchaseHistoryModel()
+                try
                 {
-                    PurchaseHistoryId = Guid.NewGuid().ToString(),
-                    MemberId = member.MemberId,
-                    TotalPoint = totalPoints,
-                    TotalPrice = totalPrice,
-                    TranDate = DateTime.UtcNow,
-                    CreatedUserId = requestModel.UserId,
-                    CreatedDateTime = DateTime.UtcNow,
-                };
-                await _context.AddAsync(history);
+                    #region Update Member Point
 
-                #endregion
+                    var totalPrice = requestModel.PurchasedItems
+                    .Where(i => i.ItemDescription == "Non Alcohol")
+                    .Sum(i => i.TotalPrice);
 
-                #region Save Purchase History Detail
+                    var totalPoints = (int)(totalPrice / 10);
 
-                var historyList = new List<PurchaseHistoryDetailModel>();
+                    member!.TotalPoints += totalPoints;
+                    member.TotalPurchasedAmount += totalPrice;
 
-                foreach (var item in requestModel.PurchasedItems)
-                {
-                    var historyItem = new PurchaseHistoryDetailModel()
+                    _context.Entry(member).State = EntityState.Modified;
+
+                    #endregion
+
+                    #region Save Purchase History
+
+                    var history = new TblPurchasehistory()
                     {
-                        PurchaseHistoryDetailId = Guid.NewGuid().ToString(),
-                        PurchaseHistoryId = history.PurchaseHistoryId,
-                        ItemDescription = item.ItemDescription,
-                        Price = item.Price,
-                        Quantity = item.Quantity,
-                        TotalPrice = item.Price * item.Quantity,
+                        PurchaseHistoryId = Guid.NewGuid().ToString(),
+                        MemberId = member.MemberId,
+                        TotalPoint = totalPoints,
+                        TotalPrice = totalPrice,
+                        TranDate = DateTime.UtcNow,
                         CreatedUserId = requestModel.UserId,
                         CreatedDateTime = DateTime.UtcNow,
                     };
-                    await _context.AddAsync(historyItem);
+                    await _context.AddAsync(history);
+
+                    #endregion
+
+                    #region Save Purchase History Detail
+
+                    var historyList = new List<TblPurchasehistorydetail>();
+
+                    foreach (var item in requestModel.PurchasedItems)
+                    {
+                        var historyItem = new TblPurchasehistorydetail()
+                        {
+                            PurchaseHistoryDetailId = Guid.NewGuid().ToString(),
+                            PurchaseHistoryId = history.PurchaseHistoryId,
+                            ItemDescription = item.ItemDescription,
+                            Price = item.Price,
+                            Quantity = item.Quantity,
+                            TotalPrice = item.Price * item.Quantity,
+                            CreatedUserId = requestModel.UserId,
+                            CreatedDateTime = DateTime.UtcNow,
+                        };
+                        await _context.AddAsync(historyItem);
+                    }
+
+                    #endregion
+
+                    await _context.SaveAndDetachAsync();
+                    await transaction.CommitAsync();
+
+                    model.IsSuccess = true;
+                    model.EarnedPoints = totalPoints;
+                    model.Message = $"Total {totalPoints} points earned!";
                 }
-
-                #endregion
-
-                await _context.SaveAndDetachAsync();
-
-                await transaction.CommitAsync();
-
-                model.IsSuccess = true;
-                model.EarnedPoints = totalPoints;
-                model.Message = $"Total {totalPoints} earned!";
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    model.IsSuccess = false;
+                    model.Message = "Something went wrong. Please try again later";
+                    _logger.LogCustomError(ex);
+                }
             }
-        }
-        catch (Exception ex)
-        {
-            model.IsSuccess = false;
-            model.Message = "Something went wrong. Please try again later";
-            _logger.LogCustomError(ex);
-        }
+        });
 
         return model;
     }

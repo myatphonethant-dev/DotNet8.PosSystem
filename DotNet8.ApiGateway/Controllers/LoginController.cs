@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using DotNet8.POS.ApiGateway.Models;
+using DotNet8.POS.ApiGateway.Services;
 
 namespace DotNet8.POS.ApiGateway.Controllers;
 
+[ApiExplorerSettings(GroupName = "Login")]
 [Route("api/[controller]")]
 [ApiController]
 public class LoginController : ControllerBase

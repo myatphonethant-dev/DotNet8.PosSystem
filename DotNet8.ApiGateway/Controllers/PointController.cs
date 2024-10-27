@@ -6,6 +6,7 @@ using System.Net;
 
 namespace DotNet8.POS.ApiGateway.Controllers;
 
+[ApiExplorerSettings(GroupName = "Point")]
 [Route("api/[controller]")]
 [ApiController]
 public class PointController : ControllerBase

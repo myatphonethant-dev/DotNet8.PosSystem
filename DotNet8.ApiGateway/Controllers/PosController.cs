@@ -7,6 +7,7 @@ using System.Net;
 
 namespace DotNet8.POS.ApiGateway.Controllers;
 
+[ApiExplorerSettings(GroupName = "Pos")]
 [Route("api/[controller]")]
 [ApiController]
 public class PosController : ControllerBase
@@ -19,7 +20,7 @@ public class PosController : ControllerBase
     }
 
     [HttpPost("scanMember")]
-    public async Task<IActionResult> ScanMember([FromBody] QrRequestModel request)
+    public async Task<IActionResult> ScanMember([FromBody] MemberQrRequestModel request)
     {
         if (string.IsNullOrEmpty(request.QrData))
         {
@@ -38,7 +39,7 @@ public class PosController : ControllerBase
     }
 
     [HttpPost("scanCoupon")]
-    public async Task<IActionResult> ScanCoupon([FromBody] QrRequestModel request)
+    public async Task<IActionResult> ScanCoupon([FromBody] MemberQrRequestModel request)
     {
         if (string.IsNullOrEmpty(request.QrData))
         {

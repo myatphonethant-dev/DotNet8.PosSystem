@@ -18,12 +18,31 @@ public class MemberService
         _createQrService = createQrService;
     }
 
-    public async Task<IEnumerable<TblMember>> GetMembers()
+    public async Task<MemberResponseModel> GetMembers()
     {
-        return await _context.TblMembers.ToListAsync();
+        var model = new MemberResponseModel();
+        var data = await _context.TblMembers
+                    .AsNoTracking()
+                    .Where(x => x.DelFlag == 0)
+                    .ToListAsync();
+
+        model.Data = data.Select(c => new MemberModel
+        {
+            MemberCode = c.MemberCode,
+            Name = c.Name,
+            PhoneNo = c.PhoneNo,
+            TotalPoints = c.TotalPoints,
+            TotalPurchasedAmount = c.TotalPurchasedAmount,
+            MemberQrFilePath = c.MemberQrFilePath,
+            CreatedUserId = c.CreatedUserId,
+            CreatedDateTime = c.CreatedDateTime,
+        }).ToList();
+        model.IsSuccess = true;
+        model.Message = "Successfully Retrieved Data.";
+        return model;
     }
 
-    public async Task<MemberResponseModel> CreateCoupon(MemberRequestModel requestModel)
+    public async Task<MemberResponseModel> CreateMember(CreateMemberRequestModel requestModel)
     {
         var model = new MemberResponseModel();
         try
@@ -57,7 +76,7 @@ public class MemberService
         return model;
     }
 
-    public async Task<MemberResponseModel> UpdateMember(MemberRequestModel requestModel)
+    public async Task<MemberResponseModel> UpdateMember(UpdateMemberRequestModel requestModel)
     {
         var model = new MemberResponseModel();
         try
@@ -94,7 +113,7 @@ public class MemberService
         return model;
     }
 
-    public async Task<MemberResponseModel> DeleteMember(MemberRequestModel requestModel)
+    public async Task<MemberResponseModel> DeleteMember(DeleteMemberRequestModel requestModel)
     {
         var model = new MemberResponseModel();
         try

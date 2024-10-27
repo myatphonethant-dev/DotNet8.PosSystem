@@ -2,7 +2,7 @@
 
 namespace DotNet8.POS.CmsService.Models;
 
-public class CouponRequestModel : ApiRequestModel
+public class CreateCouponRequestModel : ApiRequestModel
 {
     public string CouponCode { get; set; }
 
@@ -15,8 +15,6 @@ public class CouponRequestModel : ApiRequestModel
     public DateTime StartDate { get; set; }
 
     public DateTime EndDate { get; set; }
-
-    public string CouponQrFilePath { get; set; }
 }
 
 public class CouponModel
@@ -34,4 +32,9 @@ public class CouponModel
     public DateTime EndDate { get; set; }
 
     public string CouponQrFilePath { get; set; }
+}
+
+public class DeleteCouponRequestModel : ApiRequestModel
+{
+    public string CouponCode { get; set; }
 }

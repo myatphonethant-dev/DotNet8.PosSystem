@@ -1,6 +1,5 @@
 ﻿using DotNet8.POS.DbService.PosDbContext;
 using DotNet8.POS.PointService.Models;
-using DotNet8.POS.PosService.Models;
 using DotNet8.POS.Shared;
 
 namespace DotNet8.POS.PosService.Services;

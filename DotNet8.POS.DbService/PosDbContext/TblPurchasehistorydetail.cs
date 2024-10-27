@@ -5,7 +5,7 @@ namespace DotNet8.POS.DbService.PosDbContext;
 
 public partial class TblPurchasehistorydetail
 {
-    public string? PurchaseHistoryDetailId { get; set; }
+    public string PurchaseHistoryDetailId { get; set; } = null!;
 
     public string? PurchaseHistoryId { get; set; }
 

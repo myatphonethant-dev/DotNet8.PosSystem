@@ -23,11 +23,17 @@ public class CmsController : ControllerBase
     public async Task<IActionResult> GetCoupons()
     {
         var coupons = await _couponService.GetCoupons();
+
+        if (coupons == null || !coupons.Data.Any())
+        {
+            return NotFound(new { Message = "No coupons found." });
+        }
+
         return Ok(coupons);
     }
 
     [HttpPost("coupons/create")]
-    public async Task<IActionResult> CreateCoupon([FromBody] CouponRequestModel requestModel)
+    public async Task<IActionResult> CreateCoupon([FromBody] CreateCouponRequestModel requestModel)
     {
         var response = await _couponService.CreateCoupon(requestModel);
         if (response.IsSuccess)
@@ -37,19 +43,8 @@ public class CmsController : ControllerBase
         return BadRequest(response);
     }
 
-    [HttpPut("coupons/update")]
-    public async Task<IActionResult> UpdateCoupon([FromBody] CouponRequestModel requestModel)
-    {
-        var response = await _couponService.UpdateCoupon(requestModel);
-        if (response.IsSuccess)
-        {
-            return Ok(response);
-        }
-        return NotFound(response);
-    }
-
-    [HttpDelete("coupons/delete")]
-    public async Task<IActionResult> DeleteCoupon([FromBody] CouponRequestModel requestModel)
+    [HttpPost("coupons/delete")]
+    public async Task<IActionResult> DeleteCoupon([FromBody] DeleteCouponRequestModel requestModel)
     {
         var response = await _couponService.DeleteCoupon(requestModel);
         if (response.IsSuccess)
@@ -67,13 +62,17 @@ public class CmsController : ControllerBase
     public async Task<IActionResult> GetMembers()
     {
         var members = await _memberService.GetMembers();
+        if (members == null || !members.Data.Any())
+        {
+            return NotFound(new { Message = "No members found." });
+        }
         return Ok(members);
     }
 
     [HttpPost("members/create")]
-    public async Task<IActionResult> CreateMember([FromBody] MemberRequestModel requestModel)
+    public async Task<IActionResult> CreateMember([FromBody] CreateMemberRequestModel requestModel)
     {
-        var response = await _memberService.CreateCoupon(requestModel);
+        var response = await _memberService.CreateMember(requestModel);
         if (response.IsSuccess)
         {
             return CreatedAtAction(nameof(GetMembers), new { code = requestModel.MemberCode }, response);
@@ -81,8 +80,8 @@ public class CmsController : ControllerBase
         return BadRequest(response);
     }
 
-    [HttpPut("members/update")]
-    public async Task<IActionResult> UpdateMember([FromBody] MemberRequestModel requestModel)
+    [HttpPost("members/update")]
+    public async Task<IActionResult> UpdateMember([FromBody] UpdateMemberRequestModel requestModel)
     {
         var response = await _memberService.UpdateMember(requestModel);
         if (response.IsSuccess)
@@ -92,8 +91,8 @@ public class CmsController : ControllerBase
         return NotFound(response);
     }
 
-    [HttpDelete("members/delete")]
-    public async Task<IActionResult> DeleteMember([FromBody] MemberRequestModel requestModel)
+    [HttpPost("members/delete")]
+    public async Task<IActionResult> DeleteMember([FromBody] DeleteMemberRequestModel requestModel)
     {
         var response = await _memberService.DeleteMember(requestModel);
         if (response.IsSuccess)

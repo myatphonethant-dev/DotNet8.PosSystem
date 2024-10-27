@@ -14,7 +14,6 @@ Log.Logger = new LoggerConfiguration()
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHttpContextAccessor();
-
 builder.AddModularServices().AddControllers();
 
 builder.Services.AddSwaggerGen();
@@ -22,18 +21,34 @@ builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+//    app.UseSwaggerUI(c =>
+//    {
+//        c.SwaggerEndpoint("/swagger/v1/swagger.json", "POS System API v1");
+//    });
+//}
+
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
+    try
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "POS System API v1");
-    });
+        app.UseSwagger();
+        //app.UseSwaggerUI(c =>
+        //{
+        //    c.SwaggerEndpoint("/swagger/v1/swagger.json", "POS System API v1");
+        //});
+        app.UseSwaggerUI();
+    }
+    catch (Exception ex)
+    {
+        Log.Error("Error setting up Swagger: {Message}", ex.Message);
+    }
 }
 
 app.UseHttpsRedirection();
 
-app.UseMiddleware<JwtTokenMiddleware>();
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseAuthentication();

@@ -5,7 +5,7 @@ namespace DotNet8.POS.DbService.PosDbContext;
 
 public partial class TblMember
 {
-    public string? MemberId { get; set; }
+    public string MemberId { get; set; } = null!;
 
     public string? MemberCode { get; set; }
 

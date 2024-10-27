@@ -36,6 +36,6 @@ public class PointController : ControllerBase
             return StatusCode(500, new { Message = "Failed to update member points" });
         }
 
-        return Ok(new { Message = "Points updated successfully", PointsEarned = result.EarnedPoints });
+        return Ok(new { Message = "Points updated successfully", PointsEarned = result.Message });
     }
 }

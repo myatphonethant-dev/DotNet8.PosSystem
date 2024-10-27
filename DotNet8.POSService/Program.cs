@@ -12,38 +12,23 @@ Log.Logger = new LoggerConfiguration()
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog();
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
-    };
-});
-
 builder.Services.AddDbContext<PosDbContext>(options =>
     options.UseMySql(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
-        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection")),
+        builder.Configuration.GetConnectionString("DbConnection"),
+        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DbConnection")),
         mySqlOptions => mySqlOptions.EnableRetryOnFailure()
     ),
     ServiceLifetime.Transient,
     ServiceLifetime.Transient
 );
 
-builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisUrl")!));
+builder.Services.AddHttpClient();
+
+builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(builder.Configuration["RedisUrl"]!));
 
 builder.Services.AddScoped<PosService>();
 builder.Services.AddSingleton<CacheService>();
+builder.Services.AddSingleton<QrService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

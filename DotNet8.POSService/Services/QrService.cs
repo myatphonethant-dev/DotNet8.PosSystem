@@ -33,7 +33,7 @@ public class QrService
                     string cpv = Encoding.ASCII.GetString(tlv.Value);
                     if (cpv != "CPV02")
                     {
-                        model.Message = "Failed";
+                        model.isSuccess = false;
                         goto result;
                     }
                 }
@@ -45,7 +45,7 @@ public class QrService
                     string adfName = Encoding.ASCII.GetString(childTlv61!.Value);
                     if (adfName != AdfName)
                     {
-                        model.Message = "Failed";
+                        model.isSuccess = false;
                         goto result;
                     }
                 }
@@ -59,17 +59,25 @@ public class QrService
 
                 if (qrType != "Member" || qrType != "Coupon")
                 {
-                    model.Message = "Failed";
+                    model.isSuccess = false;
                     goto result;
                 }
                 else if (qrType is "Member")
                 {
                     model = await ValidateMemberQr(qrData);
+                    if (model.isSuccess is false)
+                    {
+                        goto result;
+                    }
                     model.Type = qrType;
                 }
                 else if (qrType is "Coupon")
                 {
                     model = await ValidateCouponQr(qrData);
+                    if (model.isSuccess is false)
+                    {
+                        goto result;
+                    }
                     model.Type = qrType;
                 }
             }
@@ -84,17 +92,17 @@ public class QrService
 
     private ICollection<Tlv> ConvertQrDataToTlv(string inputBase64)
     {
-        byte[] newBytes = Convert.FromBase64String(inputBase64);
-        string inputHexstr = BitConverter.ToString(newBytes).Replace("-", string.Empty);
-        ICollection<Tlv> tlvs = Tlv.ParseTlv(inputHexstr);
+        var newBytes = Convert.FromBase64String(inputBase64);
+        var inputHexstr = BitConverter.ToString(newBytes).Replace("-", string.Empty);
+        var tlvs = Tlv.ParseTlv(inputHexstr);
         return tlvs;
     }
 
     private async Task<QrResponseModel> ValidateMemberQr(string inputBase64)
     {
         var model = new QrResponseModel();
-        string merchantUserId = string.Empty;
         var tlvs = ConvertQrDataToTlv(inputBase64);
+
         foreach (var tlv in tlvs)
         {
             if (tlv.HexTag == "62")
@@ -114,18 +122,17 @@ public class QrService
                     x.MemberCode == model.Code);
         if (member is null)
         {
-            model.Message = "Failed";
-            goto result;
+            model.isSuccess = false;
+            model.Message = "Member Not Found";
+            return model;
         }
-        model.Message = "Success";
-    result:
+        model.isSuccess = true;
         return model;
     }
 
     private async Task<QrResponseModel> ValidateCouponQr(string inputBase64)
     {
         var model = new QrResponseModel();
-        string merchantUserId = string.Empty;
         var tlvs = ConvertQrDataToTlv(inputBase64);
         foreach (var tlv in tlvs)
         {
@@ -139,18 +146,18 @@ public class QrService
             }
         }
 
-        var member = await _context.TblCoupons
+        var coupon = await _context.TblCoupons
                     .AsNoTracking().
                     FirstOrDefaultAsync(x =>
                     x.CouponId == model.Id &&
                     x.CouponCode == model.Code);
-        if (member is null)
+        if (coupon is null)
         {
-            model.Message = "Failed";
-            goto result;
+            model.isSuccess = false;
+            model.Message = "Coupon Not Found";
+            return model;
         }
-        model.Message = "Success";
-    result:
+        model.isSuccess = true;
         return model;
     }
 }

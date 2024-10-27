@@ -47,6 +47,7 @@ public static class ModularService
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
                 };
             });
+        builder.Services.AddScoped<JwtTokenService>();
 
         return builder;
     }
@@ -118,7 +119,6 @@ public static class ModularService
 
     private static WebApplicationBuilder AddScopedService(this WebApplicationBuilder builder)
     {
-        builder.Services.AddScoped<JwtTokenService>();
         return builder;
     }
 }
