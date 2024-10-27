@@ -1,10 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using System.Text;
-using DotNet8.POS.Shared;
-
-namespace DotNet8.POS.ApiGateway.Services;
+﻿namespace DotNet8.POS.ApiGateway.Services;
 
 public static class ModularService
 {
@@ -96,19 +90,19 @@ public static class ModularService
 
         builder.Services.AddHttpClient("PosService", client =>
         {
-            client.BaseAddress = new Uri(builder.Configuration["PosServiceUrl"]);
+            client.BaseAddress = new Uri(builder.Configuration["PosServiceUrl"]!);
             client.Timeout = TimeSpan.FromMinutes(5);
         }).ConfigurePrimaryHttpMessageHandler(() => handler);
 
         builder.Services.AddHttpClient("PointService", client =>
         {
-            client.BaseAddress = new Uri(builder.Configuration["PointServiceUrl"]);
+            client.BaseAddress = new Uri(builder.Configuration["PointServiceUrl"]!);
             client.Timeout = TimeSpan.FromMinutes(5);
         }).ConfigurePrimaryHttpMessageHandler(() => handler);
 
         builder.Services.AddHttpClient("CmsService", client =>
         {
-            client.BaseAddress = new Uri(builder.Configuration["CmsServiceUrl"]);
+            client.BaseAddress = new Uri(builder.Configuration["CmsServiceUrl"]!);
             client.Timeout = TimeSpan.FromMinutes(5);
         }).ConfigurePrimaryHttpMessageHandler(() => handler);
 

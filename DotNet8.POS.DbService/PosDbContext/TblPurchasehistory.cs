@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace DotNet8.POS.DbService.PosDbContext;
+﻿namespace DotNet8.POS.DbService.PosDbContext;
 
 public partial class TblPurchasehistory
 {

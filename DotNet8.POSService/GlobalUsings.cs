@@ -1,7 +1,8 @@
 ﻿global using Microsoft.AspNetCore.Mvc;
-global using StackExchange.Redis;
-global using Microsoft.EntityFrameworkCore;
-global using Microsoft.IdentityModel.Tokens;
 global using System.Text;
 global using Serilog;
 global using System.Reflection;
+global using DotNet8.POS.PosService.Models;
+global using DotNet8.POS.Shared;
+global using DotNet8.POS.Shared.Models;
+global using DotNet8.POS.PosService.Services;

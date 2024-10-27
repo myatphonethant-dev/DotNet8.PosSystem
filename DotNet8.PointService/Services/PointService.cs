@@ -1,73 +1,29 @@
-﻿using DotNet8.POS.DbService.PosDbContext;
-using DotNet8.POS.Shared;
-using DotNet8.POS.Shared.Models.Point;
-using Microsoft.EntityFrameworkCore;
-
-namespace DotNet8.POS.PointService.Services;
+﻿namespace DotNet8.POS.PointService.Services;
 
 public class PointService
 {
     private readonly ILogger<PointService> _logger;
-    private readonly PosDbContext _context;
+    private readonly HttpClientService _httpClient;
+    private readonly PointDbContext _context;
 
-    public PointService(PosDbContext context, ILogger<PointService> logger)
+    public PointService(ILogger<PointService> logger, HttpClientService httpClient, PointDbContext context)
     {
-        _context = context;
         _logger = logger;
+        _httpClient = httpClient;
+        _context = context;
     }
 
-    public async Task<bool> UpdateMemberPoints(string memberCode, int points)
+    public async Task<PointExchangeResponseModel> CalculatePoints(PointExchangeRequestModel requestModel)
     {
-        try
-        {
-            var member = await _context.TblMembers
-                .FirstOrDefaultAsync(m => m.MemberCode == memberCode);
-
-            if (member == null)
-            {
-                return false;
-            }
-
-            member.TotalPoints += points;
-            _context.Entry(member).State = EntityState.Modified;
-
-            await _context.SaveAndDetachAsync();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogCustomError(ex);
-            return false;
-        }
-        return true;
-    }
-
-    public async Task<PointCalculationResponseModel> CalculatePoints(PointCalculationRequestModel requestModel)
-    {
-        var model = new PointCalculationResponseModel();
-
-        #region Validate Member
-
-        var member = await _context.TblMembers
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(m =>
-                        m.MemberId == requestModel.MemberId &&
-                        m.MemberCode == requestModel.MemberCode);
-        if (member == null)
-        {
-            model.IsSuccess = false;
-            model.Message = "Member not found!";
-            return model;
-        }
-
-        #endregion
+        var model = new PointExchangeResponseModel();
 
         var strategy = _context.Database.CreateExecutionStrategy();
 
         await strategy.ExecuteAsync(async () =>
         {
-            using (var transaction = await _context.Database.BeginTransactionAsync())
-            {
-                try
+        using (var transaction = await _context.Database.BeginTransactionAsync())
+        {
+            try
                 {
                     #region Update Member Point
 
@@ -77,10 +33,15 @@ public class PointService
 
                     var totalPoints = (int)(totalPrice / 10);
 
-                    member!.TotalPoints += totalPoints;
-                    member.TotalPurchasedAmount += totalPrice;
+                    var request = new UpdatePointModel
+                    {
+                        MemberId = requestModel.MemberId,
+                        MemberCode = requestModel.MemberCode,
+                        TotalPoint = totalPoints,
+                        TotalPrice = totalPrice
+                    };
 
-                    _context.Entry(member).State = EntityState.Modified;
+                    var response = await PassToCms(request);
 
                     #endregion
 
@@ -89,7 +50,7 @@ public class PointService
                     var history = new TblPurchasehistory()
                     {
                         PurchaseHistoryId = Guid.NewGuid().ToString(),
-                        MemberId = member.MemberId,
+                        MemberId = requestModel.MemberId,
                         TotalPoint = totalPoints,
                         TotalPrice = totalPrice,
                         TranDate = DateTime.UtcNow,
@@ -140,5 +101,17 @@ public class PointService
         });
 
         return model;
+    }
+
+    private async Task<bool> PassToCms(UpdatePointModel requestModel)
+    {
+        var endpoint = ApiEndpoints.CmsUrl.UpdateCouponCount;
+
+        var response = await _httpClient.ExecuteAsync<ApiResponseModel>(endpoint, HttpMethod.Post, requestModel);
+        if (response!.IsSuccess == false)
+        {
+            return false;
+        }
+        return true;
     }
 }

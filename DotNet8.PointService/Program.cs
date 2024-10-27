@@ -1,9 +1,3 @@
-using DotNet8.POS.DbService.PosDbContext;
-using DotNet8.POS.PointService.Services;
-using Microsoft.EntityFrameworkCore;
-using Serilog;
-using System.Reflection;
-
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .WriteTo.File(
@@ -15,7 +9,7 @@ Log.Logger = new LoggerConfiguration()
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog();
 
-builder.Services.AddDbContext<PosDbContext>(options =>
+builder.Services.AddDbContext<PointDbContext>(options =>
     options.UseMySql(
         builder.Configuration.GetConnectionString("DbConnection"),
         ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DbConnection")),
@@ -25,6 +19,9 @@ builder.Services.AddDbContext<PosDbContext>(options =>
     ServiceLifetime.Transient
 );
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<HttpClientService>();
 builder.Services.AddScoped<PointService>();
 
 builder.Services.AddControllers();

@@ -1,22 +1,18 @@
-﻿using DotNet8.POS.PointService.Services;
-using DotNet8.POS.Shared.Models.Point;
-using Microsoft.AspNetCore.Mvc;
-
-namespace DotNet8.PointSystem.Controllers;
+﻿namespace DotNet8.POS.PointService.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
 public class PointController : ControllerBase
 {
-    private readonly PointService _pointService;
+    private readonly Services.PointService _pointService;
 
-    public PointController(PointService pointService)
+    public PointController(Services.PointService pointService)
     {
         _pointService = pointService;
     }
 
     [HttpPost("calculate")]
-    public async Task<IActionResult> CalculatePoints([FromBody] PointCalculationRequestModel requestModel)
+    public async Task<IActionResult> CalculatePoints([FromBody] PointExchangeRequestModel requestModel)
     {
         if (!ModelState.IsValid)
         {
@@ -27,15 +23,9 @@ public class PointController : ControllerBase
 
         if (!result.IsSuccess)
         {
-            return BadRequest(new { Message = result.Message });
+            return BadRequest(new { result.Message });
         }
 
-        var isUpdated = await _pointService.UpdateMemberPoints(requestModel.MemberCode, result.EarnedPoints);
-        if (!isUpdated)
-        {
-            return StatusCode(500, new { Message = "Failed to update member points" });
-        }
-
-        return Ok(new { Message = "Points updated successfully", PointsEarned = result.Message });
+        return Ok(result);
     }
 }

@@ -1,20 +1,14 @@
-﻿using DotNet8.POS.Shared.Models.Cms;
-using DotNet8.POS.CmsService.Services;
-using Microsoft.AspNetCore.Mvc;
-
-namespace DotNet8.POS.CmsService.Controllers;
+﻿namespace DotNet8.POS.CmsService.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
 public class CmsController : ControllerBase
 {
-    private readonly CouponService _couponService;
-    private readonly MemberService _memberService;
+    private readonly Services.CmsService _cmsService;
 
-    public CmsController(CouponService couponService, MemberService memberService)
+    public CmsController(Services.CmsService cmsService)
     {
-        _couponService = couponService;
-        _memberService = memberService;
+        _cmsService = cmsService;
     }
 
     #region Coupon
@@ -22,7 +16,7 @@ public class CmsController : ControllerBase
     [HttpPost("coupons")]
     public async Task<IActionResult> GetCoupons()
     {
-        var coupons = await _couponService.GetCoupons();
+        var coupons = await _cmsService.GetCoupons();
 
         if (coupons == null || !coupons.Data.Any())
         {
@@ -35,7 +29,7 @@ public class CmsController : ControllerBase
     [HttpPost("coupons/create")]
     public async Task<IActionResult> CreateCoupon([FromBody] CreateCouponRequestModel requestModel)
     {
-        var response = await _couponService.CreateCoupon(requestModel);
+        var response = await _cmsService.CreateCoupon(requestModel);
         if (response.IsSuccess)
         {
             return CreatedAtAction(nameof(GetCoupons), new { code = requestModel.CouponCode }, response);
@@ -46,7 +40,29 @@ public class CmsController : ControllerBase
     [HttpPost("coupons/delete")]
     public async Task<IActionResult> DeleteCoupon([FromBody] DeleteCouponRequestModel requestModel)
     {
-        var response = await _couponService.DeleteCoupon(requestModel);
+        var response = await _cmsService.DeleteCoupon(requestModel);
+        if (response.IsSuccess)
+        {
+            return Ok(response);
+        }
+        return NotFound(response);
+    }
+
+    [HttpPost("coupons/validate-coupon")]
+    public async Task<IActionResult> ValidateCoupon([FromBody] ValidateCouponRequestModel requestModel)
+    {
+        var response = await _cmsService.ValidateCoupon(requestModel);
+        if (response.IsSuccess)
+        {
+            return Ok(response);
+        }
+        return NotFound(response);
+    }
+
+    [HttpPost("coupons/update-count")]
+    public async Task<IActionResult> UpdateCouponCount([FromBody] string couponCode)
+    {
+        var response = await _cmsService.UpdateCouponCount(couponCode);
         if (response.IsSuccess)
         {
             return Ok(response);
@@ -61,7 +77,7 @@ public class CmsController : ControllerBase
     [HttpPost("members")]
     public async Task<IActionResult> GetMembers()
     {
-        var members = await _memberService.GetMembers();
+        var members = await _cmsService.GetMembers();
         if (members == null || !members.Data.Any())
         {
             return NotFound(new { Message = "No members found." });
@@ -72,7 +88,7 @@ public class CmsController : ControllerBase
     [HttpPost("members/create")]
     public async Task<IActionResult> CreateMember([FromBody] CreateMemberRequestModel requestModel)
     {
-        var response = await _memberService.CreateMember(requestModel);
+        var response = await _cmsService.CreateMember(requestModel);
         if (response.IsSuccess)
         {
             return CreatedAtAction(nameof(GetMembers), new { code = requestModel.MemberCode }, response);
@@ -83,7 +99,7 @@ public class CmsController : ControllerBase
     [HttpPost("members/update")]
     public async Task<IActionResult> UpdateMember([FromBody] UpdateMemberRequestModel requestModel)
     {
-        var response = await _memberService.UpdateMember(requestModel);
+        var response = await _cmsService.UpdateMember(requestModel);
         if (response.IsSuccess)
         {
             return Ok(response);
@@ -94,7 +110,18 @@ public class CmsController : ControllerBase
     [HttpPost("members/delete")]
     public async Task<IActionResult> DeleteMember([FromBody] DeleteMemberRequestModel requestModel)
     {
-        var response = await _memberService.DeleteMember(requestModel);
+        var response = await _cmsService.DeleteMember(requestModel);
+        if (response.IsSuccess)
+        {
+            return Ok(response);
+        }
+        return NotFound(response);
+    }
+
+    [HttpPost("members/validate-member")]
+    public async Task<IActionResult> ValidateMember([FromBody] ValidateMemberRequestModel requestModel)
+    {
+        var response = await _cmsService.ValidateMember(requestModel);
         if (response.IsSuccess)
         {
             return Ok(response);

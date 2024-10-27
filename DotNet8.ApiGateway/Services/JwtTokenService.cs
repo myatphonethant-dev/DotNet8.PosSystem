@@ -1,9 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
-
-namespace DotNet8.POS.ApiGateway.Services;
+﻿namespace DotNet8.POS.ApiGateway.Services;
 
 public class JwtTokenService
 {

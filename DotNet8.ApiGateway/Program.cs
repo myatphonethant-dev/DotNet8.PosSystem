@@ -1,7 +1,3 @@
-using DotNet8.POS.ApiGateway.Services;
-using Serilog;
-using System.Reflection;
-
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .WriteTo.File(
@@ -13,6 +9,7 @@ Log.Logger = new LoggerConfiguration()
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHttpContextAccessor(); 
+builder.Services.AddHttpClient(); 
 builder.AddModularServices().AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();

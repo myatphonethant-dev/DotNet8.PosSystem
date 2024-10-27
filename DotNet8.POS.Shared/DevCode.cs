@@ -1,12 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
-using System.Text;
-using System.Web;
-
-namespace DotNet8.POS.Shared;
+﻿namespace DotNet8.POS.Shared;
 
 public static class DevCode
 {

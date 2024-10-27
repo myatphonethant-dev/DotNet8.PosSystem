@@ -1,0 +1,17 @@
+﻿global using DotNet8.POS.ApiGateway.Services;
+global using Serilog;
+global using System.Reflection;
+global using Microsoft.AspNetCore.Authentication.JwtBearer;
+global using Microsoft.IdentityModel.Tokens;
+global using Microsoft.OpenApi.Models;
+global using System.Text;
+global using System.IdentityModel.Tokens.Jwt;
+global using System.Security.Claims;
+global using DotNet8.POS.Shared;
+global using System.Net.Http.Headers;
+global using DotNet8.POS.Shared.Models;
+global using Microsoft.AspNetCore.Authentication.Cookies;
+global using Microsoft.AspNetCore.Authentication;
+global using Microsoft.AspNetCore.Mvc;
+global using DotNet8.POS.ApiGateway.Models;
+global using System.Net;

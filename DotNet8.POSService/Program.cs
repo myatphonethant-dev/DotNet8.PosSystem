@@ -1,6 +1,3 @@
-using DotNet8.POS.DbService.PosDbContext;
-using DotNet8.POS.PosService.Services;
-
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .WriteTo.File(
@@ -12,23 +9,10 @@ Log.Logger = new LoggerConfiguration()
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog();
 
-builder.Services.AddDbContext<PosDbContext>(options =>
-    options.UseMySql(
-        builder.Configuration.GetConnectionString("DbConnection"),
-        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DbConnection")),
-        mySqlOptions => mySqlOptions.EnableRetryOnFailure()
-    ),
-    ServiceLifetime.Transient,
-    ServiceLifetime.Transient
-);
-
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
-
-builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(builder.Configuration["RedisUrl"]!));
-
+builder.Services.AddScoped<HttpClientService>();
 builder.Services.AddScoped<PosService>();
-builder.Services.AddSingleton<CacheService>();
-builder.Services.AddSingleton<QrService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -43,7 +27,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 

@@ -1,12 +1,4 @@
-﻿using DotNet8.POS.Shared;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using DotNet8.POS.ApiGateway.Services;
-using DotNet8.POS.Shared.Models.Login;
-
-namespace DotNet8.POS.ApiGateway.Controllers;
+﻿namespace DotNet8.POS.ApiGateway.Controllers;
 
 [ApiExplorerSettings(GroupName = "Login")]
 [Route("api/[controller]")]
@@ -38,10 +30,5 @@ public class LoginController : ControllerBase
         var principal = new ClaimsPrincipal(identity);
         await HttpContext.SignInAsync(principal);
         return Ok();
-    }
-
-    public class JsonRequestModel
-    {
-        public string RequestJsonString { get; set; }
     }
 }

@@ -1,0 +1,10 @@
+﻿global using DotNet8.POS.Shared.Models;
+global using Microsoft.EntityFrameworkCore;
+global using DotNet8.POS.CmsService.Models;
+global using DotNet8.POS.CmsService.Data;
+global using DotNet8.POS.Shared;
+global using Microsoft.AspNetCore.Mvc;
+global using QRCoder;
+global using DotNet8.POS.CmsService.Services;
+global using Serilog;
+global using System.Reflection; 

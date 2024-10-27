@@ -1,12 +1,3 @@
-using DotNet8.POS.CmsService.Services;
-using DotNet8.POS.DbService.PosDbContext;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Serilog;
-using System.Reflection;
-using System.Text;
-
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .WriteTo.File(
@@ -18,7 +9,7 @@ Log.Logger = new LoggerConfiguration()
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog();
 
-builder.Services.AddDbContext<PosDbContext>(options =>
+builder.Services.AddDbContext<CmsDbContext>(options =>
     options.UseMySql(
         builder.Configuration.GetConnectionString("DbConnection"),
         ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DbConnection")),
@@ -27,11 +18,12 @@ builder.Services.AddDbContext<PosDbContext>(options =>
     ServiceLifetime.Transient,
     ServiceLifetime.Transient
 );
-
 builder.Services.AddControllers();
-builder.Services.AddScoped<MemberService>();
-builder.Services.AddScoped<CouponService>();
-builder.Services.AddScoped<CreateQrService>();
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<HttpClientService>();
+builder.Services.AddScoped<CmsService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -45,7 +37,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 

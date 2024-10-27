@@ -1,7 +1,4 @@
-﻿using DotNet8.POS.Shared;
-using System.Net.Http.Headers;
-
-namespace DotNet8.POS.ApiGateway.Services;
+﻿namespace DotNet8.POS.ApiGateway.Services;
 
 public class AddAccessTokenHeader : DelegatingHandler
 {
