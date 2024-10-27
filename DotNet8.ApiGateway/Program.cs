@@ -1,3 +1,4 @@
+using DotNet8.POS.ApiGateway.Middleware;
 using DotNet8.POS.ApiGateway.Services;
 using Serilog;
 using System.Reflection;
@@ -13,7 +14,9 @@ Log.Logger = new LoggerConfiguration()
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHttpContextAccessor();
+
 builder.AddModularServices().AddControllers();
+
 builder.Services.AddSwaggerGen();
 builder.Services.AddEndpointsApiExplorer();
 
@@ -29,6 +32,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<JwtTokenMiddleware>();
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

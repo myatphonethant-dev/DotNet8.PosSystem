@@ -64,8 +64,8 @@ public class CouponService
         {
             var coupon = await _context.TblCoupons
                 .AsNoTracking()
-                .FirstOrDefaultAsync(c => 
-                    c.CouponCode == requestModel.CouponCode && 
+                .FirstOrDefaultAsync(c =>
+                    c.CouponCode == requestModel.CouponCode &&
                     c.DelFlag == 0);
 
             if (coupon is null)
@@ -101,8 +101,8 @@ public class CouponService
         {
             var coupon = await _context.TblCoupons
                 .AsNoTracking()
-                .FirstOrDefaultAsync(c => 
-                    c.CouponCode == requestModel.CouponCode && 
+                .FirstOrDefaultAsync(c =>
+                    c.CouponCode == requestModel.CouponCode &&
                     c.DelFlag == 0);
 
             if (coupon is null)

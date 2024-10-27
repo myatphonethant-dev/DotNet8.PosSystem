@@ -23,7 +23,7 @@ public static class ModularService
     {
         var builderAppSetting = new ConfigurationBuilder();
         builderAppSetting.SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-         .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
         IConfiguration configAppSetting = builderAppSetting.Build();
         builder.Services.AddOptions();
 
@@ -32,8 +32,6 @@ public static class ModularService
 
     private static WebApplicationBuilder AddJwtAuthentication(this WebApplicationBuilder builder)
     {
-        #region JwtBearer Authentication
-
         builder.Services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -50,16 +48,12 @@ public static class ModularService
                 };
             });
 
-        #endregion
-
         return builder;
     }
 
     private static WebApplicationBuilder AddSwaggerGen(this WebApplicationBuilder builder)
     {
         builder.Services.AddEndpointsApiExplorer();
-
-        #region Authorization Swagger UI
 
         builder.Services.AddSwaggerGen(option =>
         {
@@ -84,12 +78,10 @@ public static class ModularService
                             Id = "Bearer"
                         }
                     },
-                    new List<string> ()
+                    new List<string>()
                 }
             });
         });
-
-        #endregion
 
         return builder;
     }

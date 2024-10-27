@@ -16,11 +16,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Middleware\" />
-	</ItemGroup>
-
-	<ItemGroup>
+	  <ProjectReference Include="..\DotNet8.CMSService\DotNet8.POS.CmsService.csproj" />
 	  <ProjectReference Include="..\DotNet8.POS.Shared\DotNet8.POS.Shared.csproj" />
+	  <ProjectReference Include="..\DotNet8.POSService\DotNet8.POS.PosService.csproj" />
 	</ItemGroup>
 
 </Project>

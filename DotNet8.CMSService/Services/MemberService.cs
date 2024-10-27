@@ -64,8 +64,8 @@ public class MemberService
         {
             var member = await _context.TblMembers
                 .AsNoTracking()
-                .FirstOrDefaultAsync(m => 
-                    m.MemberCode == requestModel.MemberCode && 
+                .FirstOrDefaultAsync(m =>
+                    m.MemberCode == requestModel.MemberCode &&
                     m.DelFlag == 0);
 
             if (member is null)
@@ -101,8 +101,8 @@ public class MemberService
         {
             var member = await _context.TblMembers
                 .AsNoTracking()
-                .FirstOrDefaultAsync(m => 
-                    m.MemberCode == requestModel.MemberCode && 
+                .FirstOrDefaultAsync(m =>
+                    m.MemberCode == requestModel.MemberCode &&
                     m.DelFlag == 0);
 
             if (member is null)

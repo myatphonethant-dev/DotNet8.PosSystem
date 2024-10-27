@@ -17,6 +17,8 @@ public class CmsController : ControllerBase
         _memberService = memberService;
     }
 
+    #region Coupon
+
     [HttpGet("coupons")]
     public async Task<IActionResult> GetCoupons()
     {
@@ -57,6 +59,10 @@ public class CmsController : ControllerBase
         return NotFound(response);
     }
 
+    #endregion
+
+    #region Member
+
     [HttpGet("members")]
     public async Task<IActionResult> GetMembers()
     {
@@ -96,4 +102,6 @@ public class CmsController : ControllerBase
         }
         return NotFound(response);
     }
+
+    #endregion
 }
