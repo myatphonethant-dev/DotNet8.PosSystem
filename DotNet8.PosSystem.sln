@@ -7,6 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BD864061-35F
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{7C29B316-91FD-4A47-B70F-AAB6AC6B3B76}"
 	ProjectSection(SolutionItems) = preProject
+		pos.sql = pos.sql
 		README.md = README.md
 	EndProjectSection
 EndProject
