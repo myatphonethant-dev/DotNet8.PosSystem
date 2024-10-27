@@ -1,6 +1,7 @@
-﻿using DotNet8.POS.CmsService.Models;
+﻿using DotNet8.POS.Shared.Models.Pos;
 using DotNet8.POS.Shared;
 using QRCoder;
+using DotNet8.POS.Shared.Models.Cms;
 
 namespace DotNet8.POS.CmsService.Services;
 

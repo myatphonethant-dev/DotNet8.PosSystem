@@ -1,5 +1,5 @@
-﻿using DotNet8.POS.PointService.Models;
-using DotNet8.POS.PointService.Services;
+﻿using DotNet8.POS.PointService.Services;
+using DotNet8.POS.Shared.Models.Point;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DotNet8.PointSystem.Controllers;

@@ -1,4 +1,4 @@
-﻿namespace DotNet8.POS.ApiGateway.Models;
+﻿namespace DotNet8.POS.Shared.Models.Login;
 
 public class LoginRequestModel
 {

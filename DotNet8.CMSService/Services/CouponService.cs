@@ -1,4 +1,4 @@
-﻿using DotNet8.POS.CmsService.Models;
+﻿using DotNet8.POS.Shared.Models.Cms;
 using DotNet8.POS.DbService.PosDbContext;
 using DotNet8.POS.Shared;
 using Microsoft.EntityFrameworkCore;

@@ -1,7 +1,7 @@
-﻿using DotNet8.POS.CmsService.Models;
-using DotNet8.POS.PointService.Models;
-using DotNet8.POS.PosService.Models;
-using DotNet8.POS.PosService.Services;
+﻿using DotNet8.POS.PosService.Services;
+using DotNet8.POS.Shared.Models.Cms;
+using DotNet8.POS.Shared.Models.Point;
+using DotNet8.POS.Shared.Models.Pos;
 
 namespace DotNet8.POS.PosService.Controllers;
 

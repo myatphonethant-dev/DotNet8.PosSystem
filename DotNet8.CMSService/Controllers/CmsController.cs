@@ -1,4 +1,4 @@
-﻿using DotNet8.POS.CmsService.Models;
+﻿using DotNet8.POS.Shared.Models.Cms;
 using DotNet8.POS.CmsService.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,7 +19,7 @@ public class CmsController : ControllerBase
 
     #region Coupon
 
-    [HttpGet("coupons")]
+    [HttpPost("coupons")]
     public async Task<IActionResult> GetCoupons()
     {
         var coupons = await _couponService.GetCoupons();
@@ -58,7 +58,7 @@ public class CmsController : ControllerBase
 
     #region Member
 
-    [HttpGet("members")]
+    [HttpPost("members")]
     public async Task<IActionResult> GetMembers()
     {
         var members = await _memberService.GetMembers();

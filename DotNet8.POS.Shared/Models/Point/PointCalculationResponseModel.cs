@@ -1,4 +1,4 @@
-﻿namespace DotNet8.POS.PointService.Models;
+﻿namespace DotNet8.POS.Shared.Models.Point;
 
 public class PointCalculationResponseModel
 {

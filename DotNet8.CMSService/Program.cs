@@ -28,11 +28,11 @@ builder.Services.AddDbContext<PosDbContext>(options =>
     ServiceLifetime.Transient
 );
 
+builder.Services.AddControllers();
 builder.Services.AddScoped<MemberService>();
 builder.Services.AddScoped<CouponService>();
 builder.Services.AddScoped<CreateQrService>();
 
-builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

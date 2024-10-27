@@ -1,6 +1,6 @@
 ﻿using DotNet8.POS.Shared.Models;
 
-namespace DotNet8.POS.PointService.Models;
+namespace DotNet8.POS.Shared.Models.Point;
 
 public class PointCalculationRequestModel : ApiRequestModel
 {

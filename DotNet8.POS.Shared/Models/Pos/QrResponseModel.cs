@@ -1,4 +1,4 @@
-﻿namespace DotNet8.POS.PosService.Models;
+﻿namespace DotNet8.POS.Shared.Models.Pos;
 
 public class QrResponseModel
 {

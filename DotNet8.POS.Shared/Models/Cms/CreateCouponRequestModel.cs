@@ -1,6 +1,6 @@
 ﻿using DotNet8.POS.Shared.Models;
 
-namespace DotNet8.POS.CmsService.Models;
+namespace DotNet8.POS.Shared.Models.Cms;
 
 public class CreateCouponRequestModel : ApiRequestModel
 {

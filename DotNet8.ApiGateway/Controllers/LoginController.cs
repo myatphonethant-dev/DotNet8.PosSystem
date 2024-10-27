@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using DotNet8.POS.ApiGateway.Models;
 using DotNet8.POS.ApiGateway.Services;
+using DotNet8.POS.Shared.Models.Login;
 
 namespace DotNet8.POS.ApiGateway.Controllers;
 
