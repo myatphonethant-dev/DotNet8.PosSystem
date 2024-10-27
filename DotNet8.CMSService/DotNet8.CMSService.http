@@ -1,0 +1,6 @@
+@DotNet8.CMSService_HostAddress = http://localhost:5218
+
+GET {{DotNet8.CMSService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
